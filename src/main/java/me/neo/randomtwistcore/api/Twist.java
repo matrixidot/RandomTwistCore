@@ -1,11 +1,11 @@
 package me.neo.randomtwistcore.api;
 
-import me.neo.randomtwistcore.RandomTwistCore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -108,9 +108,10 @@ public abstract class Twist implements Listener {
     /**
      * Tries to register a Twist.
      * @param twist The twist to register.
+     * @param plugin The plugin that this twist is being registered from.
      * @return True if it registered. False otherwise.
      */
-    public static boolean tryRegister(Twist twist) {
+    public static boolean tryRegister(Twist twist, Plugin plugin) {
         if (twists.contains(twist)) {
             System.out.println(twist.name + " is already registered");
             return false;
@@ -119,7 +120,8 @@ public abstract class Twist implements Listener {
         twists.add(twist);
         twistNames.add(twist.name);
         twist.onRegister();
-        RandomTwistCore.registerListener(twist);
+        Bukkit.getLogger().info("Registering events for: " + twist.getClass().getTypeName());
+        Bukkit.getPluginManager().registerEvents(twist, plugin);
         return true;
     }
 
