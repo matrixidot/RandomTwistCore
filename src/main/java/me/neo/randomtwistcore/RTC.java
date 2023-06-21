@@ -3,12 +3,13 @@ package me.neo.randomtwistcore;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.neo.randomtwistcore.commands.Commands;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
 
-public final class RandomTwistCore extends JavaPlugin {
-    public static RandomTwistCore plugin;
+public final class RTC extends JavaPlugin {
+    public static RTC plugin;
     public static Random random;
 
     @Override
@@ -22,8 +23,10 @@ public final class RandomTwistCore extends JavaPlugin {
         CommandAPI.onEnable();
         plugin = this;
         random = new Random();
-        getLogger().info("Random Twist Core by man_in_matrix#4484 aka N3E0 has been started.");
-        new Commands(this);
+        Bukkit.getScheduler().runTask(this, () -> new Commands(this));
+
+        getLogger().info("Random Twist Core (RTC) by man_in_matrix#4484 aka N3E0 has been started.");
+
     }
 
     @Override

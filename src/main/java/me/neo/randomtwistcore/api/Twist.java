@@ -9,7 +9,6 @@ import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public abstract class Twist implements Listener {
     /**
@@ -113,14 +112,16 @@ public abstract class Twist implements Listener {
      */
     public static boolean tryRegister(Twist twist, Plugin plugin) {
         if (twists.contains(twist)) {
-            System.out.println(twist.name + " is already registered");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RTC | Register]: " + twist.name + " is already registered");
+
             return false;
         }
 
         twists.add(twist);
         twistNames.add(twist.name);
         twist.onRegister();
-        Bukkit.getLogger().info("Registering events for: " + twist.getClass().getTypeName());
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[RTC | Reg Events]: " + "Registering events for: " + twist.getClass().getTypeName());
+
         Bukkit.getPluginManager().registerEvents(twist, plugin);
         return true;
     }
@@ -132,7 +133,8 @@ public abstract class Twist implements Listener {
      */
     public static boolean tryUnregister(Twist twist) {
         if (!twists.contains(twist)) {
-            System.out.println(twist.name + " is not registered");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RTC | Unregister]: " + twist.name + " is not registered");
+
             return false;
         }
 
@@ -150,18 +152,20 @@ public abstract class Twist implements Listener {
      */
     public static boolean tryBind(Player player, Twist twist) {
         if (twist == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "Internal error occurred while binding player.");
+            Bukkit.getLogger().severe("Internal error occurred while binding player, twist is null");
             return false;
         }
-        Bukkit.getLogger().info("Attempting to bind " + player.getName() + " to: " + twist.name);
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[RTC | Bind]: Attempting to bind " + player.getName() + " to: " + twist.name);
 
         if (twist.boundPlayers.contains(player)) {
-            Bukkit.getLogger().log(Level.WARNING, player.getName() + " is already bound to " + twist.name + ".");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RTC | Bind]: " + player.getName() + " is already bound to: " + twist.name + ".");
             return false;
         }
 
         twist.boundPlayers.add(player);
-        Bukkit.getLogger().info("Successfully bound " + player.getName() + " to: " + twist.name);
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Bind]: Successfully bound " + player.getName() + " from: " + twist.name);
+
         player.sendMessage(ChatColor.GREEN + "Got new twist: " + twist.name + "!");
         player.sendMessage(ChatColor.AQUA + twist.description);
         if (twist instanceof ItemTwist itemTwist)
@@ -179,18 +183,19 @@ public abstract class Twist implements Listener {
      */
     public static boolean tryUnbind(Player player, Twist twist) {
         if (twist == null) {
-            Bukkit.getLogger().log(Level.SEVERE, "Internal error occurred while unbinding player.");
+            Bukkit.getLogger().severe("Internal error occurred while unbinding player, twist is null");
             return false;
         }
-        Bukkit.getLogger().log(Level.WARNING, "Attempting to unbind " + player.getName() + " from: " + twist.name);
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[RTC | Unbind]: Attempting to unbind " + player.getName() + " from: " + twist.name);
 
         if (!twist.boundPlayers.contains(player)) {
-            Bukkit.getLogger().info(player.getName() + " is not bound to " + twist.name + ".");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RTC | Unbind]: " + player.getName() + " is not bound to: " + twist.name + ".");
             return false;
         }
 
         twist.boundPlayers.remove(player);
-        Bukkit.getLogger().info("Successfully unbound " + player.getName() + " from: " + twist.name);
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unbind]: Successfully unbound " + player.getName() + " from: " + twist.name);
         player.sendMessage(ChatColor.RED + "Lost twist: " + twist.name + "!");
         if (twist instanceof ItemTwist itemTwist)
             player.undiscoverRecipe(itemTwist.customRecipe.getKey());
@@ -204,7 +209,7 @@ public abstract class Twist implements Listener {
      * Mainly used for debugging.
      */
     protected void onRegister() {
-        System.out.println(ChatColor.GREEN + "[TwistCore | Register]: " + name + " has been registered");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Register]: " + name + " has been registered");
     }
 
     /**
@@ -212,6 +217,6 @@ public abstract class Twist implements Listener {
      * Mainly used for debugging.
      */
     protected void onUnregister() {
-        System.out.println(ChatColor.GREEN + "[TwistCore | Unregister]: " + name + " has been unregistered");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unregister]: " + name + " has been unregistered");
     }
 }

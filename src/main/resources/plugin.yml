@@ -1,6 +1,6 @@
 name: RandomTwistCore
 version: '${project.version}'
-main: me.neo.randomtwistcore.RandomTwistCore
+main: me.neo.randomtwistcore.RTC
 api-version: 1.19
 authors: [ N3E0, man_in_matrix ]
 description: A core plugin that randomly selects twists and adds them to players every 5 minutes.

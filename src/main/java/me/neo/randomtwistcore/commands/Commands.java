@@ -4,7 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
-import me.neo.randomtwistcore.RandomTwistCore;
+import me.neo.randomtwistcore.RTC;
 import me.neo.randomtwistcore.api.Twist;
 import me.neo.randomtwistcore.util.RandomElements;
 import org.bukkit.Bukkit;
@@ -14,17 +14,14 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public class Commands {
-    private final RandomTwistCore plugin;
-    public Commands(RandomTwistCore plugin) {
+    private final RTC plugin;
+    public Commands(RTC plugin) {
         this.plugin = plugin;
-        StartCommand();
-        GrantTwist();
-        RevokeTwist();
+        startCommand();
+        grantTwist();
+        revokeTwist();
     }
-
-
-
-    public void StartCommand() {
+    public void startCommand() {
         new CommandAPICommand("startTimer")
                 .executes((sender, args) -> {
                     GiveTwists();
@@ -32,7 +29,7 @@ public class Commands {
                 }).register();
     }
 
-    public void GrantTwist() {
+    public void grantTwist() {
         new CommandAPICommand("giveTwist")
                 .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
                 .withPermission(CommandPermission.OP)
@@ -47,7 +44,7 @@ public class Commands {
                 }).register();
     }
 
-    public void RevokeTwist() {
+    public void revokeTwist() {
         new CommandAPICommand("takeTwist")
                 .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
                 .withPermission(CommandPermission.OP)
@@ -75,4 +72,6 @@ public class Commands {
             }
         }, 0, 6000);
     }
+
+
 }
