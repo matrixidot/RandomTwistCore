@@ -119,7 +119,7 @@ public abstract class Twist implements Listener {
         twists.add(twist);
         twistNames.add(twist.name);
         twist.onRegister();
-        RandomTwistCore.registerEvent(twist);
+        RandomTwistCore.registerListener(twist);
         return true;
     }
 
@@ -202,7 +202,7 @@ public abstract class Twist implements Listener {
      * Mainly used for debugging.
      */
     protected void onRegister() {
-        System.out.println(name + " has been registered");
+        System.out.println(ChatColor.GREEN + "[TwistCore | Register]: " + name + " has been registered");
     }
 
     /**
@@ -210,6 +210,6 @@ public abstract class Twist implements Listener {
      * Mainly used for debugging.
      */
     protected void onUnregister() {
-        System.out.println(name + " has been unregistered");
+        System.out.println(ChatColor.GREEN + "[TwistCore | Unregister]: " + name + " has been unregistered");
     }
 }

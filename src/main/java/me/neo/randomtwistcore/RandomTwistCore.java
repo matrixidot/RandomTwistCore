@@ -2,7 +2,7 @@ package me.neo.randomtwistcore;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import me.neo.randomtwistcore.commands.StartCommand;
+import me.neo.randomtwistcore.commands.Commands;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,7 +25,7 @@ public final class RandomTwistCore extends JavaPlugin {
         plugin = this;
         random = new Random();
         getLogger().info("Random Twist Core by man_in_matrix#4484 aka N3E0 has been started.");
-        new StartCommand(this);
+        new Commands(this);
     }
 
     @Override
@@ -34,7 +34,7 @@ public final class RandomTwistCore extends JavaPlugin {
 
     }
 
-    public static void registerEvent(Listener listener) {
+    public static void registerListener(Listener listener) {
         Bukkit.getLogger().info("Registering events for: " + listener.getClass().getTypeName());
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }

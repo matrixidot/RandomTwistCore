@@ -12,13 +12,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-public class StartCommand {
-    private RandomTwistCore plugin;
-    Random random = new Random();
-
-    public StartCommand(RandomTwistCore plugin) {
+public class Commands {
+    private final RandomTwistCore plugin;
+    public Commands(RandomTwistCore plugin) {
         this.plugin = plugin;
         StartCommand();
         GrantTwist();
@@ -28,7 +25,7 @@ public class StartCommand {
 
 
     public void StartCommand() {
-        new CommandAPICommand("start")
+        new CommandAPICommand("startTimer")
                 .executes((sender, args) -> {
                     GiveTwists();
                     sender.sendMessage("Successfully started Random Twists");
