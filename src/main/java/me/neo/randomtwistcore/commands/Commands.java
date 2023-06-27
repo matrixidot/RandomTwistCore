@@ -4,19 +4,19 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
-import me.neo.randomtwistcore.RTC;
 import me.neo.randomtwistcore.api.twists.Twist;
-import me.neo.randomtwistcore.util.RandomElements;
+import me.neo.randomtwistcore.util.RTCRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
 public class Commands {
-    private final RTC plugin;
+    private final JavaPlugin plugin;
 
-    public Commands(RTC plugin) {
+    public Commands(JavaPlugin plugin) {
         this.plugin = plugin;
         startCommand();
         grantTwist();
@@ -72,7 +72,7 @@ public class Commands {
                         continue;
                     valid.add(twist);
                 }
-                Twist.tryBind(player, RandomElements.randomItem(valid));
+                Twist.tryBind(player, RTCRandom.randomItem(valid));
             }
         }, 0, 6000);
     }
