@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import me.neo.randomtwistcore.RTC;
-import me.neo.randomtwistcore.api.Twist;
+import me.neo.randomtwistcore.api.twists.Twist;
 import me.neo.randomtwistcore.util.RandomElements;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 public class Commands {
     private final RTC plugin;
+
     public Commands(RTC plugin) {
         this.plugin = plugin;
         startCommand();
@@ -38,6 +39,9 @@ public class Commands {
                     Twist twist = Twist.Get(twistName);
                     if (twist == null) {
                         sender.sendMessage(ChatColor.DARK_RED + "Invalid twist inputted");
+                        for (String s : Twist.twistNames) {
+                            sender.sendMessage(s);
+                        }
                     } else {
                         Twist.tryBind(sender, twist);
                     }
@@ -58,8 +62,8 @@ public class Commands {
                     }
                 }).register();
     }
-
-    private void GiveTwists() {
+    
+    private void GiveTwists () {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ArrayList<Twist> valid = new ArrayList<>();
@@ -73,5 +77,5 @@ public class Commands {
         }, 0, 6000);
     }
 
-
 }
+

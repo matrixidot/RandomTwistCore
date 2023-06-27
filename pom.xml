@@ -6,10 +6,10 @@
 
     <groupId>me.neo</groupId>
     <artifactId>RandomTwistCore</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
-    <name>RandomTwistCore</name>
+    <name>RTC</name>
 
     <description>A core plugin that randomly selects twists and adds them to players every 5 minutes.</description>
     <properties>

@@ -1,4 +1,4 @@
-package me.neo.randomtwistcore.api;
+package me.neo.randomtwistcore.api.twists;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -168,8 +168,12 @@ public abstract class Twist implements Listener {
 
         player.sendMessage(ChatColor.GREEN + "Got new twist: " + twist.name + "!");
         player.sendMessage(ChatColor.AQUA + twist.description);
-        if (twist instanceof ItemTwist itemTwist)
-            player.discoverRecipe(itemTwist.customRecipe.getKey());
+        if (twist instanceof ItemTwist itemTwist) {
+            if (itemTwist.customRecipe != null)
+                player.discoverRecipe(itemTwist.customRecipe.getKey());
+            if (itemTwist.grantItemOnBind)
+                player.getInventory().addItem(itemTwist.getCustomItem());
+        }
 
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 4f);
         return true;
@@ -198,7 +202,8 @@ public abstract class Twist implements Listener {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unbind]: Successfully unbound " + player.getName() + " from: " + twist.name);
         player.sendMessage(ChatColor.RED + "Lost twist: " + twist.name + "!");
         if (twist instanceof ItemTwist itemTwist)
-            player.undiscoverRecipe(itemTwist.customRecipe.getKey());
+            if (itemTwist.customRecipe != null)
+                player.undiscoverRecipe(itemTwist.customRecipe.getKey());
 
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 0.5f);
         return true;
@@ -210,6 +215,9 @@ public abstract class Twist implements Listener {
      */
     protected void onRegister() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Register]: " + name + " has been registered");
+        for (String string : Twist.twistNames) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[RTC | All Registered]: " + string);
+        }
     }
 
     /**
@@ -218,5 +226,8 @@ public abstract class Twist implements Listener {
      */
     protected void onUnregister() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unregister]: " + name + " has been unregistered");
+        for (String string : Twist.twistNames) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[RTC | All Registered]: " + string);
+        }
     }
 }

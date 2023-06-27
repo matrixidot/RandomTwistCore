@@ -2,8 +2,6 @@ package me.neo.randomtwistcore;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import me.neo.randomtwistcore.commands.Commands;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
@@ -23,15 +21,10 @@ public final class RTC extends JavaPlugin {
         CommandAPI.onEnable();
         plugin = this;
         random = new Random();
-        Bukkit.getScheduler().runTask(this, () -> new Commands(this));
-
-        getLogger().info("Random Twist Core (RTC) by man_in_matrix#4484 aka N3E0 has been started.");
-
     }
 
     @Override
     public void onDisable() {
         CommandAPI.onDisable();
-
     }
 }
