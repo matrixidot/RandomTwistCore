@@ -13,25 +13,31 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
+/**
+ * This class and it's accompanying methods are not to be used anywhere in the code manually.
+ * It is handled automatically in the {@link me.neo.randomtwistcore.RTCAPI} class.
+ */
 public class Commands {
     private final JavaPlugin plugin;
 
     public Commands(JavaPlugin plugin) {
         this.plugin = plugin;
         startCommand();
-        grantTwist();
-        revokeTwist();
+        giveTwist();
+        takeTwist();
     }
+
     public void startCommand() {
         new CommandAPICommand("startTimer")
                 .executes((sender, args) -> {
-                    GiveTwists();
+                    twistTimer();
                     sender.sendMessage("Successfully started Random Twists");
                 }).register();
     }
 
-    public void grantTwist() {
+    public void giveTwist() {
         new CommandAPICommand("giveTwist")
+                .withAliases("gt")
                 .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((sender, args) -> {
@@ -39,17 +45,17 @@ public class Commands {
                     Twist twist = Twist.Get(twistName);
                     if (twist == null) {
                         sender.sendMessage(ChatColor.DARK_RED + "Invalid twist inputted");
-                        for (String s : Twist.twistNames) {
-                            sender.sendMessage(s);
-                        }
                     } else {
-                        Twist.tryBind(sender, twist);
+                        boolean success = Twist.tryBind(sender, twist);
+                        if (!success)
+                            sender.sendMessage(ChatColor.RED + "Internal Occurred while trying to bind you to: " + twistName);
                     }
                 }).register();
     }
 
-    public void revokeTwist() {
+    public void takeTwist() {
         new CommandAPICommand("takeTwist")
+                .withAliases("tt")
                 .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((sender, args) -> {
@@ -58,12 +64,14 @@ public class Commands {
                     if (twist == null) {
                         sender.sendMessage(ChatColor.DARK_RED + "Invalid twist inputted");
                     } else {
-                        Twist.tryUnbind(sender, twist);
+                        boolean success = Twist.tryUnbind(sender, twist, false);
+                        if (!success)
+                            sender.sendMessage(ChatColor.RED + "Internal Occurred while trying to bind you to: " + twistName);
                     }
                 }).register();
     }
-    
-    private void GiveTwists () {
+
+    private void twistTimer() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ArrayList<Twist> valid = new ArrayList<>();
