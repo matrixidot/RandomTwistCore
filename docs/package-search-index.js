@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"me.neo.randomtwistcore"},{"l":"me.neo.randomtwistcore.api.raycast"},{"l":"me.neo.randomtwistcore.api.twists"},{"l":"me.neo.randomtwistcore.api.twists.events"},{"l":"me.neo.randomtwistcore.commands"},{"l":"me.neo.randomtwistcore.util"}];updateSearchResults();
