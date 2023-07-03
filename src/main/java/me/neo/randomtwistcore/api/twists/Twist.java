@@ -4,15 +4,20 @@ import me.neo.randomtwistcore.api.twists.events.PlayerBindTwistEvent;
 import me.neo.randomtwistcore.api.twists.events.PlayerUnbindTwistEvent;
 import me.neo.randomtwistcore.api.twists.events.RegisterTwistEvent;
 import me.neo.randomtwistcore.api.twists.events.UnregisterTwistEvent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class encompasses all backend logic of RTC and can also be extended to make custom twists.
@@ -27,6 +32,11 @@ public abstract class Twist implements Listener {
      * An {@link java.util.ArrayList} of registered twists' names.
      */
     public static ArrayList<String> twistNames = new ArrayList<>();
+
+    /**
+     * A stash for player's unclaimed twist items.
+     */
+    public static HashMap<Player, List<ItemStack>> itemStash = new HashMap<>();
 
     /**
      * An {@link java.util.ArrayList} of {@link org.bukkit.entity.Player}s that are bound to a given twist..
@@ -226,8 +236,28 @@ public abstract class Twist implements Listener {
             if (twist instanceof ItemTwist itemTwist) {
                 if (itemTwist.customRecipe != null)
                     player.discoverRecipe(itemTwist.customRecipe.getKey());
-                if (itemTwist.grantItemOnBind)
-                    player.getInventory().addItem(itemTwist.getCustomItem());
+                if (itemTwist.grantItemOnBind) {
+                    if (player.getInventory().firstEmpty() == -1) {
+                        if (!itemStash.containsKey(player))
+                            itemStash.put(player, new ArrayList<>());
+                        if (!itemStash.get(player).contains(itemTwist.customItem))
+                            itemStash.get(player).add(itemTwist.customItem);
+
+                        player.sendMessage(ChatColor.GREEN + "Your inventory is full so the item was added to your twist stash!");
+                        player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.RED + itemStash.get(player).size() + " in your stash!");
+
+                        TextComponent filler = new TextComponent("§eClick ");
+
+                        TextComponent clickable = new TextComponent("§6§lHERE");
+                        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claimStash"));
+
+                        TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct");
+
+                        player.spigot().sendMessage(filler, clickable, filler1);
+                    } else {
+                        player.getInventory().addItem(itemTwist.getCustomItem());
+                    }
+                }
             }
 
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 4f);

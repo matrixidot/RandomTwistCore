@@ -8,6 +8,7 @@ import me.neo.randomtwistcore.api.twists.Twist;
 import me.neo.randomtwistcore.util.RTCRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +26,7 @@ public class Commands {
         startCommand();
         giveTwist();
         takeTwist();
+        claimStash();
     }
 
     public void startCommand() {
@@ -67,6 +69,24 @@ public class Commands {
                         boolean success = Twist.tryUnbind(sender, twist, false);
                         if (!success)
                             sender.sendMessage(ChatColor.RED + "Internal Occurred while trying to bind you to: " + twistName);
+                    }
+                }).register();
+    }
+
+    public void claimStash() {
+        new CommandAPICommand("claimStash")
+                .withAliases("ct")
+                .executesPlayer((sender, args) -> {
+                    int itemsClaimed = 0;
+                    for (int i = 0; i < Twist.itemStash.get(sender).size(); i++) {
+                        if (sender.getInventory().firstEmpty() == -1) {
+                            sender.sendMessage(ChatColor.RED + "Your inventory was full, but you claimed " + ChatColor.RED + itemsClaimed + " items!");
+                            break;
+                        }
+                        sender.getInventory().addItem(Twist.itemStash.get(sender).get(i));
+                        Twist.itemStash.get(sender).remove(i);
+                        sender.playSound(sender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
+                        itemsClaimed++;
                     }
                 }).register();
     }

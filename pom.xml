@@ -6,7 +6,7 @@
 
     <groupId>me.neo</groupId>
     <artifactId>RandomTwistCore</artifactId>
-    <version>1.1.0-min</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>RTC</name>
@@ -42,7 +42,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <minimizeJar>true</minimizeJar>
+                    <minimizeJar>false</minimizeJar>
                     <relocations>
                         <relocation>
                             <pattern>dev.jorel.commandapi</pattern>
