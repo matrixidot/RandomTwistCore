@@ -77,6 +77,8 @@ public class Commands {
         new CommandAPICommand("claimStash")
                 .withAliases("ct")
                 .executesPlayer((sender, args) -> {
+                    if (!Twist.itemStash.containsKey(sender))
+                        Twist.itemStash.put(sender, new ArrayList<>());
                     int itemsClaimed = 0;
                     ArrayList<Integer> indexesToRemove = new ArrayList<>();
                     if (Twist.itemStash.get(sender).size() <= 0) {

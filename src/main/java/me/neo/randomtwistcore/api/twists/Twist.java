@@ -129,37 +129,49 @@ public abstract class Twist implements Listener {
 
     /**
      * Adds an item to the player's item Stash.
+     * Will create the stash if the player does not have one.
      * @param player The {@link org.bukkit.entity.Player}'s stash to add the item to.
      * @param toAdd The {@link org.bukkit.inventory.ItemStack} to add to the stash.
      */
     public static void addToStash(Player player, ItemStack toAdd) {
+        if (!itemStash.containsKey(player))
+            itemStash.put(player, new ArrayList<>());
         itemStash.get(player).add(toAdd);
     }
 
     /**
      * Removes the item at the index from the player's stash.
+     * Will create the stash if the player does not have one.
      * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
      * @param index The (0-indexed) index of the item to remove.
      */
     public static void removeFromStash(Player player, int index) {
+        if (!itemStash.containsKey(player))
+            itemStash.put(player, new ArrayList<>());
         itemStash.get(player).remove(index);
     }
 
     /**
      * Removes the item from the player's stash.
+     * Will create the stash if the player does not have one.
      * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
      * @param stack The {@link org.bukkit.inventory.ItemStack} to remove from the stash.
      */
     public static void removeFromStash(Player player, ItemStack stack) {
+        if (!itemStash.containsKey(player))
+            itemStash.put(player, new ArrayList<>());
         itemStash.get(player).remove(stack);
     }
 
     /**
      * Removes the item at the index from the player's stash.
+     * Will create the stash if the player does not have one.
      * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
      * @param indexes The (0-indexed) indexes of the item to remove.
      */
     public static void removeFromStash(Player player, int... indexes) {
+        if (!itemStash.containsKey(player))
+            itemStash.put(player, new ArrayList<>());
         for (int index : indexes) {
             itemStash.get(player).remove(index);
         }
@@ -167,10 +179,13 @@ public abstract class Twist implements Listener {
 
     /**
      * Removes the item at the index from the player's stash.
+     * Will create the stash if the player does not have one.
      * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
      * @param stacks The {@link org.bukkit.inventory.ItemStack}s to remove.
      */
     public static void removeFromStash(Player player, ItemStack... stacks) {
+        if (!itemStash.containsKey(player))
+            itemStash.put(player, new ArrayList<>());
         for (ItemStack stack : stacks) {
             itemStash.get(player).remove(stack);
         }
@@ -178,12 +193,15 @@ public abstract class Twist implements Listener {
 
     /**
      * Gets the item at the specified index from the player's stash.
+     * Will create the stash if the player does not have one.
      * Returns null if there is no item at the index.
      * @param player The {@link org.bukkit.entity.Player}'s stash to get the item from.
      * @param index The (0-indexed) index of the item to get.
      * @return The {@link org.bukkit.inventory.ItemStack} at the specified index or null.
      */
     public static ItemStack getFromStash(Player player, int index) {
+        if (!itemStash.containsKey(player))
+            itemStash.put(player, new ArrayList<>());
         return itemStash.get(player).get(index);
 
     }
@@ -296,12 +314,12 @@ public abstract class Twist implements Listener {
             player.sendMessage(ChatColor.GREEN + "Got new twist: " + twist.name + "!");
             player.sendMessage(ChatColor.AQUA + twist.description);
             if (twist instanceof ItemTwist itemTwist) {
+                if (!itemStash.containsKey(player))
+                    itemStash.put(player, new ArrayList<>());
                 if (itemTwist.customRecipe != null)
                     player.discoverRecipe(itemTwist.customRecipe.getKey());
                 if (itemTwist.grantItemOnBind) {
                     if (player.getInventory().firstEmpty() == -1) {
-                        if (!itemStash.containsKey(player))
-                            itemStash.put(player, new ArrayList<>());
                         if (!itemStash.get(player).contains(itemTwist.customItem))
                             itemStash.get(player).add(itemTwist.customItem);
 
