@@ -6,7 +6,7 @@
 
     <groupId>me.neo</groupId>
     <artifactId>RandomTwistCore</artifactId>
-    <version>1.1.1-rc-1</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>RTC</name>

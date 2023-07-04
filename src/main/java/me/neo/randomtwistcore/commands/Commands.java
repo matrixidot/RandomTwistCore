@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class Commands {
         giveTwist();
         takeTwist();
         claimStash();
-        viewStash();
     }
 
     public void startCommand() {
@@ -81,9 +79,14 @@ public class Commands {
                 .executesPlayer((sender, args) -> {
                     int itemsClaimed = 0;
                     ArrayList<Integer> indexesToRemove = new ArrayList<>();
+                    if (Twist.itemStash.get(sender).size() <= 0) {
+                        sender.sendMessage(ChatColor.GREEN + "You have no items in your stash!");
+                        return;
+                    }
                     for (int i = 0; i < Twist.itemStash.get(sender).size(); i++) {
                         if (sender.getInventory().firstEmpty() == -1) {
                             sender.sendMessage(ChatColor.RED + "Your inventory was full, but you claimed " + ChatColor.RED + itemsClaimed + " items!");
+                            sender.sendMessage(ChatColor.YELLOW + "You still have " + ChatColor.RED + Twist.itemStash.get(sender).size() + " items left!");
                             break;
                         }
                         sender.getInventory().addItem(Twist.getFromStash(sender, i));
@@ -94,16 +97,8 @@ public class Commands {
                     for (int i : indexesToRemove) {
                         Twist.removeFromStash(sender, i);
                     }
-                }).register();
-    }
-
-    public void viewStash() {
-        new CommandAPICommand("viewStash")
-                .withAliases("vs")
-                .executesPlayer((sender, args) -> {
-                    sender.sendMessage("Stash contains:");
-                    for (ItemStack stack : Twist.itemStash.get(sender)) {
-                        sender.sendMessage(stack.getType().name());
+                    if (Twist.itemStash.get(sender).size() <= 0) {
+                        sender.sendMessage(ChatColor.GREEN + "All items have been claimed!");
                     }
                 }).register();
     }

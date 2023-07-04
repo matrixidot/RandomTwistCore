@@ -305,15 +305,15 @@ public abstract class Twist implements Listener {
                         if (!itemStash.get(player).contains(itemTwist.customItem))
                             itemStash.get(player).add(itemTwist.customItem);
 
-                        player.sendMessage(ChatColor.GREEN + "Your inventory is full so the item was added to your twist stash!");
+                        player.sendMessage(ChatColor.GREEN + "Your inventory is full so the item was added to your stash!");
                         player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.RED + itemStash.get(player).size() + " in your stash!");
 
                         TextComponent filler = new TextComponent("§eClick ");
 
                         TextComponent clickable = new TextComponent("§6§lHERE");
-                        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claimStash"));
+                        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ct"));
 
-                        TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct");
+                        TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct.");
 
                         player.spigot().sendMessage(filler, clickable, filler1);
                     } else {
