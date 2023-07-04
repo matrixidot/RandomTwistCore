@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class Commands {
         giveTwist();
         takeTwist();
         claimStash();
+        viewStash();
     }
 
     public void startCommand() {
@@ -78,15 +80,30 @@ public class Commands {
                 .withAliases("ct")
                 .executesPlayer((sender, args) -> {
                     int itemsClaimed = 0;
+                    ArrayList<Integer> indexesToRemove = new ArrayList<>();
                     for (int i = 0; i < Twist.itemStash.get(sender).size(); i++) {
                         if (sender.getInventory().firstEmpty() == -1) {
                             sender.sendMessage(ChatColor.RED + "Your inventory was full, but you claimed " + ChatColor.RED + itemsClaimed + " items!");
                             break;
                         }
-                        sender.getInventory().addItem(Twist.itemStash.get(sender).get(i));
-                        Twist.itemStash.get(sender).remove(i);
+                        sender.getInventory().addItem(Twist.getFromStash(sender, i));
+                        indexesToRemove.add(i);
                         sender.playSound(sender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
                         itemsClaimed++;
+                    }
+                    for (int i : indexesToRemove) {
+                        Twist.removeFromStash(sender, i);
+                    }
+                }).register();
+    }
+
+    public void viewStash() {
+        new CommandAPICommand("viewStash")
+                .withAliases("vs")
+                .executesPlayer((sender, args) -> {
+                    sender.sendMessage("Stash contains:");
+                    for (ItemStack stack : Twist.itemStash.get(sender)) {
+                        sender.sendMessage(stack.getType().name());
                     }
                 }).register();
     }

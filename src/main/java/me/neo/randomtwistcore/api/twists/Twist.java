@@ -128,6 +128,68 @@ public abstract class Twist implements Listener {
     }
 
     /**
+     * Adds an item to the player's item Stash.
+     * @param player The {@link org.bukkit.entity.Player}'s stash to add the item to.
+     * @param toAdd The {@link org.bukkit.inventory.ItemStack} to add to the stash.
+     */
+    public static void addToStash(Player player, ItemStack toAdd) {
+        itemStash.get(player).add(toAdd);
+    }
+
+    /**
+     * Removes the item at the index from the player's stash.
+     * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
+     * @param index The (0-indexed) index of the item to remove.
+     */
+    public static void removeFromStash(Player player, int index) {
+        itemStash.get(player).remove(index);
+    }
+
+    /**
+     * Removes the item from the player's stash.
+     * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
+     * @param stack The {@link org.bukkit.inventory.ItemStack} to remove from the stash.
+     */
+    public static void removeFromStash(Player player, ItemStack stack) {
+        itemStash.get(player).remove(stack);
+    }
+
+    /**
+     * Removes the item at the index from the player's stash.
+     * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
+     * @param indexes The (0-indexed) indexes of the item to remove.
+     */
+    public static void removeFromStash(Player player, int... indexes) {
+        for (int index : indexes) {
+            itemStash.get(player).remove(index);
+        }
+    }
+
+    /**
+     * Removes the item at the index from the player's stash.
+     * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
+     * @param stacks The {@link org.bukkit.inventory.ItemStack}s to remove.
+     */
+    public static void removeFromStash(Player player, ItemStack... stacks) {
+        for (ItemStack stack : stacks) {
+            itemStash.get(player).remove(stack);
+        }
+    }
+
+    /**
+     * Gets the item at the specified index from the player's stash.
+     * Returns null if there is no item at the index.
+     * @param player The {@link org.bukkit.entity.Player}'s stash to get the item from.
+     * @param index The (0-indexed) index of the item to get.
+     * @return The {@link org.bukkit.inventory.ItemStack} at the specified index or null.
+     */
+    public static ItemStack getFromStash(Player player, int index) {
+        return itemStash.get(player).get(index);
+
+    }
+
+
+    /**
      * Calls {@link me.neo.randomtwistcore.api.twists.events.RegisterTwistEvent} and tries to register a twist.
      * If the event was cancelled the twist will not be registered.
      * If a twist was registered after the plugin was enabled the twist will not show up inside the command pool.
