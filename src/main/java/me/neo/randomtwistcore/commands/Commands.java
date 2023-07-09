@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class Commands {
                     if (!Twist.itemStash.containsKey(sender))
                         Twist.itemStash.put(sender, new ArrayList<>());
                     int itemsClaimed = 0;
-                    ArrayList<Integer> indexesToRemove = new ArrayList<>();
+                    ArrayList<ItemStack> itemsToRemove = new ArrayList<>();
                     if (Twist.itemStash.get(sender).size() <= 0) {
                         sender.sendMessage(ChatColor.GREEN + "You have no items in your stash!");
                         return;
@@ -91,13 +92,14 @@ public class Commands {
                             sender.sendMessage(ChatColor.YELLOW + "You still have " + ChatColor.RED + Twist.itemStash.get(sender).size() + " items left!");
                             break;
                         }
-                        sender.getInventory().addItem(Twist.getFromStash(sender, i));
-                        indexesToRemove.add(i);
+                        ItemStack toGrant = Twist.getFromStash(sender, i);
+                        sender.getInventory().addItem(toGrant);
+                        itemsToRemove.add(toGrant);
                         sender.playSound(sender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
                         itemsClaimed++;
                     }
-                    for (int i : indexesToRemove) {
-                        Twist.removeFromStash(sender, i);
+                    for (ItemStack stack : itemsToRemove) {
+                        Twist.removeFromStash(sender, stack);
                     }
                     if (Twist.itemStash.get(sender).size() <= 0) {
                         sender.sendMessage(ChatColor.GREEN + "All items have been claimed!");
