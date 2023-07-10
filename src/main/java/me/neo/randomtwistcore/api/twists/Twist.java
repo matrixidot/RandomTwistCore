@@ -157,7 +157,7 @@ public abstract class Twist implements Listener {
      * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
      * @param stack The {@link org.bukkit.inventory.ItemStack} to remove from the stash.
      */
-    public static void removeFromStash(Player player, ItemStack stack) {
+    public static void prremoveFromStash(Player player, ItemStack stack) {
         if (!itemStash.containsKey(player))
             itemStash.put(player, new ArrayList<>());
         itemStash.get(player).remove(stack);
