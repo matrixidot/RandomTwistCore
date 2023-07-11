@@ -284,9 +284,10 @@ public abstract class Twist implements Listener {
      * If the event was cancelled the player will not be bound.
      * @param player The {@link org.bukkit.entity.Player} to bind.
      * @param twist The {@link me.neo.randomtwistcore.api.twists.Twist} to bind the player to.
+     * @param silent Whether to send a message to the player if the binding was successful.
      * @return True if the player was successfully bound. False otherwise.
      */
-    public static boolean tryBind(Player player, Twist twist) {
+    public static boolean tryBind(Player player, Twist twist, boolean silent) {
         if (twist == null) {
             Bukkit.getLogger().severe("Internal error occurred while binding player, twist is null.");
             return false;
@@ -310,14 +311,18 @@ public abstract class Twist implements Listener {
 
             twist.boundPlayers.add(player);
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Bound]: " + player.getName() + " to: " + twist.name + "!");
-
-            player.sendMessage(ChatColor.GREEN + "Got new twist: " + twist.name + "!");
-            player.sendMessage(ChatColor.AQUA + twist.description);
+            if (!silent) {
+                player.sendMessage(ChatColor.GREEN + "Got new twist: " + twist.name + "!");
+                player.sendMessage(ChatColor.AQUA + twist.description);
+            }
             if (twist instanceof ItemTwist itemTwist) {
                 if (!itemStash.containsKey(player))
                     itemStash.put(player, new ArrayList<>());
-                if (itemTwist.customRecipe != null)
+                if (itemTwist.customRecipe != null) {
                     player.discoverRecipe(itemTwist.customRecipe.getKey());
+                    player.sendMessage(ChatColor.GREEN + "You have discovered a new recipe for: " + twist.name + "!");
+                }
+
                 if (itemTwist.grantItemOnBind) {
                     if (player.getInventory().firstEmpty() == -1) {
                         if (!itemStash.get(player).contains(itemTwist.customItem))
