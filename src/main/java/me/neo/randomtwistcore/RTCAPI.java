@@ -3,7 +3,8 @@ package me.neo.randomtwistcore;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.neo.randomtwistcore.api.twists.Twist;
-import me.neo.randomtwistcore.commands.Commands;
+import me.neo.randomtwistcore.api.twists.events.DeathListener;
+import me.neo.randomtwistcore.commands.TwistCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -31,7 +32,8 @@ public class RTCAPI {
      * @param <T> The {@link org.bukkit.plugin.java.JavaPlugin}
      */
     public static <T extends JavaPlugin> void onEnable(T plugin) {
-        new Commands(plugin);
+        new TwistCommands(plugin);
+        Bukkit.getPluginManager().registerEvents(new DeathListener(), plugin);
         for (String string : Twist.twistNames) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[RTC | Registered]: " + string);
         }

@@ -24,10 +24,10 @@ import java.util.List;
  * This class and it's accompanying methods are not to be used anywhere in the code manually.
  * It is handled automatically in the {@link me.neo.randomtwistcore.RTCAPI} class.
  */
-public class Commands {
+public class TwistCommands {
     private final JavaPlugin plugin;
 
-    public Commands(JavaPlugin plugin) {
+    public TwistCommands(JavaPlugin plugin) {
         this.plugin = plugin;
         startCommand();
         giveTwist();
