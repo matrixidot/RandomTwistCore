@@ -2,6 +2,7 @@ package me.neo.randomtwistcore.api.twists.events;
 
 import me.neo.randomtwistcore.api.twists.ItemTwist;
 import me.neo.randomtwistcore.api.twists.Twist;
+import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +31,7 @@ public class RTCEventListener implements Listener {
         }
         if (doesStash)
             Twist.doAddStashText(player);
-        
+        player.sendMessage(ChatColor.RED + "You seem to have lost some twist-specific items!");
+        player.sendMessage(ChatColor.GREEN + "Not to worry as some of the items may have been " + ChatColor.GOLD + ChatColor.BOLD + "SOULBOUND" + ChatColor.GREEN + " and returned to your inventory!");
     }
 }
