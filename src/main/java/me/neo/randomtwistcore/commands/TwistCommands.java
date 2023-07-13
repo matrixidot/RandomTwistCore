@@ -5,9 +5,7 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
-import me.neo.randomtwistcore.api.twists.ItemTwist;
 import me.neo.randomtwistcore.api.twists.Twist;
-import me.neo.randomtwistcore.util.Cooldown;
 import me.neo.randomtwistcore.util.RTCRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,9 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class and it's accompanying methods are not to be used anywhere in the code manually.
@@ -33,7 +29,6 @@ public class TwistCommands {
         giveTwist();
         takeTwist();
         claimStash();
-        reclaimItems();
     }
 
     public void startCommand() {
@@ -112,38 +107,6 @@ public class TwistCommands {
                     }
                 }).register();
     }
-
-    public void reclaimItems() {
-        new CommandAPICommand("reclaim")
-                .withAliases("rc")
-                .executesPlayer((sender, args) -> {
-                    Cooldown cd = Cooldown.getCooldown(sender, "RTC.reclaimCommand.CooldownFeature.Internal");
-                    if (cd != null && !cd.isExpired()) {
-                        sender.sendMessage(ChatColor.YELLOW + "You must wait " + ChatColor.RED + cd.getRemainingCooldown() + ChatColor.YELLOW + " seconds before using this command again!");
-                        return;
-                    }
-                    List<ItemTwist> toReclaim = Twist.getReclaimableBoundItemTwists(sender);
-                    boolean doesStash = false;
-                    for (ItemTwist it : toReclaim) {
-                        if (sender.getInventory().contains(it.getCustomItem()))
-                            continue;
-                        if (sender.getInventory().firstEmpty() == -1) {
-                            Twist.addToStash(sender, it.getCustomItem());
-                            doesStash = true;
-                        } else {
-                            sender.getInventory().addItem(it.getCustomItem());
-                        }
-                    }
-                    if (doesStash)
-                        Twist.doAddStashText(sender);
-
-                    if (cd == null)
-                        Cooldown.newCooldown(sender, "RTC.reclaimCommand.CooldownFeature.Internal", Duration.ofSeconds(180));
-                    else
-                        cd.updateCooldown(Duration.ofSeconds(180));
-                }).register();
-    }
-
     private void twistTimer() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {

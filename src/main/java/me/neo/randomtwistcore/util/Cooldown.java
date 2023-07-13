@@ -55,7 +55,7 @@ public class Cooldown {
     }
 
     public Long getRemainingCooldown() {
-        if (time != null && isExpired()) {
+        if (time != null && !isExpired()) {
             return Duration.between(Instant.now(), time).getSeconds();
         } else {
             return 0L;

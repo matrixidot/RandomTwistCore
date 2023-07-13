@@ -17,19 +17,19 @@ import java.util.Arrays;
  * An extension of {@link me.neo.randomtwistcore.api.twists.Twist} that is used to make twists containing a custom item.
  */
 public abstract class ItemTwist extends Twist {
-    public ItemTwist(String name, String description, int id, boolean grantItemOnBind, boolean reclaimable) {
+    public ItemTwist(String name, String description, int id, boolean grantItemOnBind, boolean soulbound) {
         super(name, description, id);
         customItem = buildCustomItem();
         customRecipe = buildShapedRecipe();
         Bukkit.addRecipe(customRecipe);
         this.grantItemOnBind = grantItemOnBind;
-        this.reclaimable = reclaimable;
+        this.soulbound = soulbound;
     }
 
-    protected boolean reclaimable;
+    protected boolean soulbound;
 
-    public boolean isReclaimable() {
-        return reclaimable;
+    public boolean isSoulbound() {
+        return soulbound;
     }
 
     /**

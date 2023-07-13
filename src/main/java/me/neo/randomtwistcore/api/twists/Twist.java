@@ -192,6 +192,11 @@ public abstract class Twist implements Listener {
 
     }
 
+    /**
+     * Gets all twists the player is bound to.
+     * @param player The player to check.
+     * @return A {@link java.util.List} of {@link me.neo.randomtwistcore.api.twists.Twist}s the player is bound to.
+     */
     public static List<Twist> getAllBoundTwists(Player player) {
         List<Twist> bound = new ArrayList<>();
         for (Twist twist : twists) {
@@ -201,6 +206,11 @@ public abstract class Twist implements Listener {
         return bound;
     }
 
+    /**
+     * Gets all Non ItemTwists the player is bound to.
+     * @param player The player to check.
+     * @return A {@link java.util.List} of {@link me.neo.randomtwistcore.api.twists.Twist}s the player is bound to.
+     */
     public static List<Twist> getBoundAbilityTwists(Player player) {
         List<Twist> bound = new ArrayList<>();
         for (Twist twist : twists) {
@@ -212,6 +222,11 @@ public abstract class Twist implements Listener {
         return bound;
     }
 
+    /**
+     * Gets all the ItemTwists the player is bound to.
+     * @param player The player to check.
+     * @return A {@link java.util.List} of {@link me.neo.randomtwistcore.api.twists.ItemTwist}s the player is bound to.
+     */
     public static List<ItemTwist> getBoundItemTwists(Player player) {
         List<ItemTwist> bound = new ArrayList<>();
         for (Twist twist : twists) {
@@ -221,10 +236,15 @@ public abstract class Twist implements Listener {
         return bound;
     }
 
-    public static List<ItemTwist> getReclaimableBoundItemTwists(Player player) {
+    /**
+     * Gets all the soulbound ItemTwists the player is bound to.
+     * @param player The player to check.
+     * @return A {@link java.util.List} of {@link me.neo.randomtwistcore.api.twists.ItemTwist}s the player is bound to that are soulbound.
+     */
+    public static List<ItemTwist> getSoulboundItemTwists(Player player) {
         List<ItemTwist> bound = new ArrayList<>();
         for (Twist twist : twists) {
-            if (twist instanceof ItemTwist it && it.isBound(player) && it.isReclaimable())
+            if (twist instanceof ItemTwist it && it.isBound(player) && it.isSoulbound())
                 bound.add(it);
         }
         return bound;
@@ -459,19 +479,6 @@ public abstract class Twist implements Listener {
         clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ct"));
 
         TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct.");
-
-        player.spigot().sendMessage(filler, clickable, filler1);
-    }
-
-    public static void doReclaimText(Player player) {
-        player.sendMessage(ChatColor.RED + "You seem to have lost some twist-specific items!");
-
-        TextComponent filler = new TextComponent("§aNot to worry though as you can simply §eClick ");
-
-        TextComponent clickable = new TextComponent("§6§lHERE");
-        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/rc"));
-
-        TextComponent filler1 = new TextComponent(" §eto reclaim the items, or run /rc.");
 
         player.spigot().sendMessage(filler, clickable, filler1);
     }
