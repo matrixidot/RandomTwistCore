@@ -1,4 +1,4 @@
-package me.neo.randomtwistcore.api.twists.events;
+package me.neo.randomtwistcore.api.twists.customevents;
 
 
 import me.neo.randomtwistcore.api.twists.Twist;

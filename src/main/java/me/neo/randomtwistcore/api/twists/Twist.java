@@ -1,9 +1,9 @@
 package me.neo.randomtwistcore.api.twists;
 
-import me.neo.randomtwistcore.api.twists.events.PlayerBindTwistEvent;
-import me.neo.randomtwistcore.api.twists.events.PlayerUnbindTwistEvent;
-import me.neo.randomtwistcore.api.twists.events.RegisterTwistEvent;
-import me.neo.randomtwistcore.api.twists.events.UnregisterTwistEvent;
+import me.neo.randomtwistcore.api.twists.customevents.PlayerBindTwistEvent;
+import me.neo.randomtwistcore.api.twists.customevents.PlayerUnbindTwistEvent;
+import me.neo.randomtwistcore.api.twists.customevents.RegisterTwistEvent;
+import me.neo.randomtwistcore.api.twists.customevents.UnregisterTwistEvent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -167,20 +167,6 @@ public abstract class Twist implements Listener {
      * Removes the item at the index from the player's stash.
      * Will create the stash if the player does not have one.
      * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
-     * @param indexes The (0-indexed) indexes of the item to remove.
-     */
-    public static void removeFromStash(Player player, int... indexes) {
-        if (!itemStash.containsKey(player))
-            itemStash.put(player, new ArrayList<>());
-        for (int index : indexes) {
-            itemStash.get(player).remove(index);
-        }
-    }
-
-    /**
-     * Removes the item at the index from the player's stash.
-     * Will create the stash if the player does not have one.
-     * @param player The {@link org.bukkit.entity.Player}'s stash to remove the item from.
      * @param stacks The {@link org.bukkit.inventory.ItemStack}s to remove.
      */
     public static void removeFromStash(Player player, ItemStack... stacks) {
@@ -206,9 +192,46 @@ public abstract class Twist implements Listener {
 
     }
 
+    public static List<Twist> getAllBoundTwists(Player player) {
+        List<Twist> bound = new ArrayList<>();
+        for (Twist twist : twists) {
+            if (twist.isBound(player))
+                bound.add(twist);
+        }
+        return bound;
+    }
+
+    public static List<Twist> getBoundAbilityTwists(Player player) {
+        List<Twist> bound = new ArrayList<>();
+        for (Twist twist : twists) {
+            if (twist instanceof ItemTwist)
+                continue;
+            if (twist.isBound(player))
+                bound.add(twist);
+        }
+        return bound;
+    }
+
+    public static List<ItemTwist> getBoundItemTwists(Player player) {
+        List<ItemTwist> bound = new ArrayList<>();
+        for (Twist twist : twists) {
+            if (twist instanceof ItemTwist it && it.isBound(player))
+                bound.add(it);
+        }
+        return bound;
+    }
+
+    public static List<ItemTwist> getReclaimableBoundItemTwists(Player player) {
+        List<ItemTwist> bound = new ArrayList<>();
+        for (Twist twist : twists) {
+            if (twist instanceof ItemTwist it && it.isBound(player) && it.isReclaimable())
+                bound.add(it);
+        }
+        return bound;
+    }
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.events.RegisterTwistEvent} and tries to register a twist.
+     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.RegisterTwistEvent} and tries to register a twist.
      * If the event was cancelled the twist will not be registered.
      * If a twist was registered after the plugin was enabled the twist will not show up inside the command pool.
      * The functionality, however, will still persist.
@@ -241,7 +264,7 @@ public abstract class Twist implements Listener {
     }
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.events.UnregisterTwistEvent} and tries to unregister a twist.
+     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.UnregisterTwistEvent} and tries to unregister a twist.
      * If the event was cancelled the twist will not be unregistered.
      * This will not remove the twist from the command pool as those are statically generated upon enabling the plugin.
      * Unregistering a twist will automatically unbind all players from the twist but will not call PlayerUnbindEvent as the twist has been removed.
@@ -280,7 +303,7 @@ public abstract class Twist implements Listener {
     }
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.events.PlayerBindTwistEvent} and tries to bind a player to a twist.
+     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.PlayerBindTwistEvent} and tries to bind a player to a twist.
      * If the event was cancelled the player will not be bound.
      * @param player The {@link org.bukkit.entity.Player} to bind.
      * @param twist The {@link me.neo.randomtwistcore.api.twists.Twist} to bind the player to.
@@ -327,18 +350,7 @@ public abstract class Twist implements Listener {
                     if (player.getInventory().firstEmpty() == -1) {
                         if (!itemStash.get(player).contains(itemTwist.customItem))
                             itemStash.get(player).add(itemTwist.customItem);
-
-                        player.sendMessage(ChatColor.GREEN + "Your inventory is full so the item was added to your stash!");
-                        player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.RED + itemStash.get(player).size() + " in your stash!");
-
-                        TextComponent filler = new TextComponent("§eClick ");
-
-                        TextComponent clickable = new TextComponent("§6§lHERE");
-                        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ct"));
-
-                        TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct.");
-
-                        player.spigot().sendMessage(filler, clickable, filler1);
+                        doAddStashText(player);
                     } else {
                         player.getInventory().addItem(itemTwist.getCustomItem());
                     }
@@ -350,8 +362,9 @@ public abstract class Twist implements Listener {
         }
     }
 
+
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.events.PlayerBindTwistEvent} and tries to unbind a player from a twist.
+     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.PlayerBindTwistEvent} and tries to unbind a player from a twist.
      * If the event was cancelled the player will not be unbound.
      * @param player The {@link org.bukkit.entity.Player} to unbind.
      * @param twist The {@link me.neo.randomtwistcore.api.twists.Twist} to unbind the player from.
@@ -419,5 +432,47 @@ public abstract class Twist implements Listener {
      */
     protected void onUnregister() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unregistered]: " + name + "!");
+    }
+
+    public static void doAddStashText(Player player) {
+        player.sendMessage(ChatColor.GREEN + "Your inventory is full so the item was added to your stash!");
+        player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.RED + itemStash.get(player).size() + " in your stash!");
+
+        TextComponent filler = new TextComponent("§eClick ");
+
+        TextComponent clickable = new TextComponent("§6§lHERE");
+        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ct"));
+
+        TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct.");
+
+        player.spigot().sendMessage(filler, clickable, filler1);
+    }
+
+
+    public static void doRemoveStashText(Player player, int itemsClaimed) {
+        player.sendMessage(ChatColor.RED + "Your inventory was full, but you claimed " + ChatColor.RED + itemsClaimed + " items!");
+        player.sendMessage(ChatColor.YELLOW + "You still have " + ChatColor.RED + itemStash.get(player).size() + " items left!");
+
+        TextComponent filler = new TextComponent("§eClick ");
+
+        TextComponent clickable = new TextComponent("§6§lHERE");
+        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ct"));
+
+        TextComponent filler1 = new TextComponent(" §eto claim the items, or run /ct.");
+
+        player.spigot().sendMessage(filler, clickable, filler1);
+    }
+
+    public static void doReclaimText(Player player) {
+        player.sendMessage(ChatColor.RED + "You seem to have lost some twist-specific items!");
+
+        TextComponent filler = new TextComponent("§aNot to worry though as you can simply §eClick ");
+
+        TextComponent clickable = new TextComponent("§6§lHERE");
+        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/rc"));
+
+        TextComponent filler1 = new TextComponent(" §eto reclaim the items, or run /rc.");
+
+        player.spigot().sendMessage(filler, clickable, filler1);
     }
 }

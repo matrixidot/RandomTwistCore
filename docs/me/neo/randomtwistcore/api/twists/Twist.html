@@ -199,25 +199,25 @@ implements org.bukkit.event.Listener</span></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryBind(org.bukkit.entity.Player,me.neo.randomtwistcore.api.twists.Twist)" class="member-name-link">tryBind</a><wbr>(org.bukkit.entity.Player&nbsp;player,
  <a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>PlayerBindTwistEvent</code></a> and tries to bind a player to a twist.</div>
+<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>PlayerBindTwistEvent</code></a> and tries to bind a player to a twist.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryRegister(me.neo.randomtwistcore.api.twists.Twist,org.bukkit.plugin.Plugin)" class="member-name-link">tryRegister</a><wbr>(<a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist,
  org.bukkit.plugin.Plugin&nbsp;plugin)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Calls <a href="events/RegisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>RegisterTwistEvent</code></a> and tries to register a twist.</div>
+<div class="block">Calls <a href="events/RegisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>RegisterTwistEvent</code></a> and tries to register a twist.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryUnbind(org.bukkit.entity.Player,me.neo.randomtwistcore.api.twists.Twist,boolean)" class="member-name-link">tryUnbind</a><wbr>(org.bukkit.entity.Player&nbsp;player,
  <a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist,
  boolean&nbsp;unregistered)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>PlayerBindTwistEvent</code></a> and tries to unbind a player from a twist.</div>
+<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>PlayerBindTwistEvent</code></a> and tries to unbind a player from a twist.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryUnregister(me.neo.randomtwistcore.api.twists.Twist)" class="member-name-link">tryUnregister</a><wbr>(<a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Calls <a href="events/UnregisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>UnregisterTwistEvent</code></a> and tries to unregister a twist.</div>
+<div class="block">Calls <a href="events/UnregisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>UnregisterTwistEvent</code></a> and tries to unregister a twist.</div>
 </div>
 </div>
 </div>
@@ -380,7 +380,7 @@ implements org.bukkit.event.Listener</span></div>
 <h3>tryRegister</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">tryRegister</span><wbr><span class="parameters">(<a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist,
  org.bukkit.plugin.Plugin&nbsp;plugin)</span></div>
-<div class="block">Calls <a href="events/RegisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>RegisterTwistEvent</code></a> and tries to register a twist.
+<div class="block">Calls <a href="events/RegisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>RegisterTwistEvent</code></a> and tries to register a twist.
  If the event was cancelled the twist will not be registered.
  If a twist was registered after the plugin was enabled the twist will not show up inside the command pool.
  The functionality, however, will still persist.</div>
@@ -397,7 +397,7 @@ implements org.bukkit.event.Listener</span></div>
 <section class="detail" id="tryUnregister(me.neo.randomtwistcore.api.twists.Twist)">
 <h3>tryUnregister</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">tryUnregister</span><wbr><span class="parameters">(<a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist)</span></div>
-<div class="block">Calls <a href="events/UnregisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>UnregisterTwistEvent</code></a> and tries to unregister a twist.
+<div class="block">Calls <a href="events/UnregisterTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>UnregisterTwistEvent</code></a> and tries to unregister a twist.
  If the event was cancelled the twist will not be unregistered.
  This will not remove the twist from the command pool as those are statically generated upon enabling the plugin.
  Unregistering a twist will automatically unbind all players from the twist but will not call PlayerUnbindEvent as the twist has been removed.
@@ -415,7 +415,7 @@ implements org.bukkit.event.Listener</span></div>
 <h3>tryBind</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">tryBind</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player,
  <a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist)</span></div>
-<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>PlayerBindTwistEvent</code></a> and tries to bind a player to a twist.
+<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>PlayerBindTwistEvent</code></a> and tries to bind a player to a twist.
  If the event was cancelled the player will not be bound.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -432,7 +432,7 @@ implements org.bukkit.event.Listener</span></div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">tryUnbind</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player,
  <a href="Twist.html" title="class in me.neo.randomtwistcore.api.twists">Twist</a>&nbsp;twist,
  boolean&nbsp;unregistered)</span></div>
-<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.events"><code>PlayerBindTwistEvent</code></a> and tries to unbind a player from a twist.
+<div class="block">Calls <a href="events/PlayerBindTwistEvent.html" title="class in me.neo.randomtwistcore.api.twists.customevents"><code>PlayerBindTwistEvent</code></a> and tries to unbind a player from a twist.
  If the event was cancelled the player will not be unbound.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

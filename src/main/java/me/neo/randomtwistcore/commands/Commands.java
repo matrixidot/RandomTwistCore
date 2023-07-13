@@ -5,7 +5,9 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
+import me.neo.randomtwistcore.api.twists.ItemTwist;
 import me.neo.randomtwistcore.api.twists.Twist;
+import me.neo.randomtwistcore.util.Cooldown;
 import me.neo.randomtwistcore.util.RTCRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class and it's accompanying methods are not to be used anywhere in the code manually.
@@ -29,6 +33,7 @@ public class Commands {
         giveTwist();
         takeTwist();
         claimStash();
+        reclaimItems();
     }
 
     public void startCommand() {
@@ -90,8 +95,7 @@ public class Commands {
                     }
                     for (int i = 0; i < Twist.itemStash.get(sender).size(); i++) {
                         if (sender.getInventory().firstEmpty() == -1) {
-                            sender.sendMessage(ChatColor.RED + "Your inventory was full, but you claimed " + ChatColor.RED + itemsClaimed + " items!");
-                            sender.sendMessage(ChatColor.YELLOW + "You still have " + ChatColor.RED + Twist.itemStash.get(sender).size() + " items left!");
+                            Twist.doRemoveStashText(sender, itemsClaimed);
                             break;
                         }
                         ItemStack toGrant = Twist.getFromStash(sender, i);
@@ -106,6 +110,37 @@ public class Commands {
                     if (Twist.itemStash.get(sender).size() <= 0) {
                         sender.sendMessage(ChatColor.GREEN + "All items have been claimed!");
                     }
+                }).register();
+    }
+
+    public void reclaimItems() {
+        new CommandAPICommand("reclaim")
+                .withAliases("rc")
+                .executesPlayer((sender, args) -> {
+                    Cooldown cd = Cooldown.getCooldown(sender, "RTC.reclaimCommand.CooldownFeature.Internal");
+                    if (cd != null && !cd.isExpired()) {
+                        sender.sendMessage(ChatColor.YELLOW + "You must wait " + ChatColor.RED + cd.getRemainingCooldown() + ChatColor.YELLOW + " seconds before using this command again!");
+                        return;
+                    }
+                    List<ItemTwist> toReclaim = Twist.getReclaimableBoundItemTwists(sender);
+                    boolean doesStash = false;
+                    for (ItemTwist it : toReclaim) {
+                        if (sender.getInventory().contains(it.getCustomItem()))
+                            continue;
+                        if (sender.getInventory().firstEmpty() == -1) {
+                            Twist.addToStash(sender, it.getCustomItem());
+                            doesStash = true;
+                        } else {
+                            sender.getInventory().addItem(it.getCustomItem());
+                        }
+                    }
+                    if (doesStash)
+                        Twist.doAddStashText(sender);
+
+                    if (cd == null)
+                        Cooldown.newCooldown(sender, "RTC.reclaimCommand.CooldownFeature.Internal", Duration.ofSeconds(180));
+                    else
+                        cd.updateCooldown(Duration.ofSeconds(180));
                 }).register();
     }
 

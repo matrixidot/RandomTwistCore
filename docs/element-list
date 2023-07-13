@@ -1,5 +1,5 @@
 me.neo.randomtwistcore
 me.neo.randomtwistcore.api.twists
-me.neo.randomtwistcore.api.twists.events
+me.neo.randomtwistcore.api.twists.customevents
 me.neo.randomtwistcore.commands
 me.neo.randomtwistcore.util
