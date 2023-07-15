@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
+import me.neo.randomtwistcore.RTCAPI;
 import me.neo.randomtwistcore.api.twists.Twist;
 import me.neo.randomtwistcore.util.RTCRandom;
 import org.bukkit.Bukkit;
@@ -118,7 +119,7 @@ public class TwistCommands {
                 }
                 Twist.tryBind(player, RTCRandom.randomItem(valid), false);
             }
-        }, 0, 6000);
+        }, 0, RTCAPI.twistTimer);
     }
 
 }
