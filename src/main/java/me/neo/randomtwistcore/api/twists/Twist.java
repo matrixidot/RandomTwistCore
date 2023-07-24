@@ -18,10 +18,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import java.util.UUID;
 /**
  * This class encompasses all backend logic of RTC and can also be extended to make custom twists.
  */
+@SuppressWarnings("unused")
 public abstract class Twist implements Listener {
     /**
      * An {@link java.util.ArrayList} of registered twists.
@@ -36,12 +37,12 @@ public abstract class Twist implements Listener {
     /**
      * A stash for player's unclaimed twist items.
      */
-    public static HashMap<Player, List<ItemStack>> itemStash = new HashMap<>();
+    public static HashMap<UUID, List<ItemStack>> itemStash = new HashMap<>();
 
     /**
      * An {@link java.util.ArrayList} of {@link org.bukkit.entity.Player}s that are bound to a given twist..
      */
-    protected ArrayList<Player> boundPlayers = new ArrayList<>();
+    protected ArrayList<UUID> boundPlayers = new ArrayList<>();
 
     /**
      * The name of the twist.
@@ -71,7 +72,7 @@ public abstract class Twist implements Listener {
      * @return True if the player is bound to the twist. False otherwise.
      */
     public static boolean isBound(Player player, Twist twist) {
-        return twist.boundPlayers.contains(player);
+        return twist.boundPlayers.contains(player.getUniqueId());
     }
 
     /**
@@ -81,7 +82,7 @@ public abstract class Twist implements Listener {
      * @return If the player is bound.
      */
     public boolean isBound(Player player) {
-        return boundPlayers.contains(player);
+        return boundPlayers.contains(player.getUniqueId());
     }
 
     /**
@@ -134,9 +135,9 @@ public abstract class Twist implements Listener {
      * @param toAdd The {@link org.bukkit.inventory.ItemStack} to add to the stash.
      */
     public static void addToStash(Player player, ItemStack toAdd) {
-        if (!itemStash.containsKey(player))
-            itemStash.put(player, new ArrayList<>());
-        itemStash.get(player).add(toAdd);
+        if (!itemStash.containsKey(player.getUniqueId()))
+            itemStash.put(player.getUniqueId(), new ArrayList<>());
+        itemStash.get(player.getUniqueId()).add(toAdd);
     }
 
     /**
@@ -146,9 +147,9 @@ public abstract class Twist implements Listener {
      * @param index The (0-indexed) index of the item to remove.
      */
     public static void removeFromStash(Player player, int index) {
-        if (!itemStash.containsKey(player))
-            itemStash.put(player, new ArrayList<>());
-        itemStash.get(player).remove(index);
+        if (!itemStash.containsKey(player.getUniqueId()))
+            itemStash.put(player.getUniqueId(), new ArrayList<>());
+        itemStash.get(player.getUniqueId()).remove(index);
     }
 
     /**
@@ -158,9 +159,9 @@ public abstract class Twist implements Listener {
      * @param stack The {@link org.bukkit.inventory.ItemStack} to remove from the stash.
      */
     public static void removeFromStash(Player player, ItemStack stack) {
-        if (!itemStash.containsKey(player))
-            itemStash.put(player, new ArrayList<>());
-        itemStash.get(player).remove(stack);
+        if (!itemStash.containsKey(player.getUniqueId()))
+            itemStash.put(player.getUniqueId(), new ArrayList<>());
+        itemStash.get(player.getUniqueId()).remove(stack);
     }
 
     /**
@@ -170,10 +171,10 @@ public abstract class Twist implements Listener {
      * @param stacks The {@link org.bukkit.inventory.ItemStack}s to remove.
      */
     public static void removeFromStash(Player player, ItemStack... stacks) {
-        if (!itemStash.containsKey(player))
-            itemStash.put(player, new ArrayList<>());
+        if (!itemStash.containsKey(player.getUniqueId()))
+            itemStash.put(player.getUniqueId(), new ArrayList<>());
         for (ItemStack stack : stacks) {
-            itemStash.get(player).remove(stack);
+            itemStash.get(player.getUniqueId()).remove(stack);
         }
     }
 
@@ -186,9 +187,9 @@ public abstract class Twist implements Listener {
      * @return The {@link org.bukkit.inventory.ItemStack} at the specified index or null.
      */
     public static ItemStack getFromStash(Player player, int index) {
-        if (!itemStash.containsKey(player))
-            itemStash.put(player, new ArrayList<>());
-        return itemStash.get(player).get(index);
+        if (!itemStash.containsKey(player.getUniqueId()))
+            itemStash.put(player.getUniqueId(), new ArrayList<>());
+        return itemStash.get(player.getUniqueId()).get(index);
 
     }
 
@@ -347,29 +348,30 @@ public abstract class Twist implements Listener {
         } else {
             Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[RTC | Binding]: " + player.getName() + " to: " + twist.name + "...");
 
-            if (twist.boundPlayers.contains(player)) {
+            if (twist.isBound(player)) {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RTC | Binding]: " + player.getName() + " is already bound to: " + twist.name + ".");
                 return false;
             }
 
-            twist.boundPlayers.add(player);
+            twist.boundPlayers.add(player.getUniqueId());
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Bound]: " + player.getName() + " to: " + twist.name + "!");
             if (!silent) {
                 player.sendMessage(ChatColor.GREEN + "Got new twist: " + twist.name + "!");
                 player.sendMessage(ChatColor.AQUA + twist.description);
             }
             if (twist instanceof ItemTwist itemTwist) {
-                if (!itemStash.containsKey(player))
-                    itemStash.put(player, new ArrayList<>());
+                if (!itemStash.containsKey(player.getUniqueId()))
+                    itemStash.put(player.getUniqueId(), new ArrayList<>());
                 if (itemTwist.customRecipe != null) {
                     player.discoverRecipe(itemTwist.customRecipe.getKey());
-                    player.sendMessage(ChatColor.GREEN + "You have discovered a new recipe for: " + twist.name + "!");
+                    if (!silent)
+                        player.sendMessage(ChatColor.GREEN + "You have discovered a new recipe for: " + twist.name + "!");
                 }
 
                 if (itemTwist.grantItemOnBind) {
                     if (player.getInventory().firstEmpty() == -1) {
-                        if (!itemStash.get(player).contains(itemTwist.customItem))
-                            itemStash.get(player).add(itemTwist.customItem);
+                        if (!itemStash.get(player.getUniqueId()).contains(itemTwist.customItem))
+                            itemStash.get(player.getUniqueId()).add(itemTwist.customItem);
                         doAddStashText(player);
                     } else {
                         player.getInventory().addItem(itemTwist.getCustomItem());
@@ -419,12 +421,12 @@ public abstract class Twist implements Listener {
             } else {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[RTC | Unbinding]: " + player.getName() + " from: " + twist.name + "...");
 
-                if (!twist.boundPlayers.contains(player)) {
+                if (!twist.isBound(player)) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[RTC | Unbinding]: " + player.getName() + " is not bound to: " + twist.name + ".");
                     return false;
                 }
 
-                twist.boundPlayers.remove(player);
+                twist.boundPlayers.remove(player.getUniqueId());
                 Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unbound]: " + player.getName() + " from: " + twist.name + "!");
                 player.sendMessage(ChatColor.RED + "Lost twist: " + twist.name + "!");
 
@@ -456,7 +458,7 @@ public abstract class Twist implements Listener {
 
     public static void doAddStashText(Player player) {
         player.sendMessage(ChatColor.GREEN + "Your inventory is full so the item was added to your stash!");
-        player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.RED + itemStash.get(player).size() + " in your stash!");
+        player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.RED + itemStash.get(player.getUniqueId()).size() + " in your stash!");
 
         TextComponent filler = new TextComponent("§eClick ");
 
@@ -471,7 +473,7 @@ public abstract class Twist implements Listener {
 
     public static void doRemoveStashText(Player player, int itemsClaimed) {
         player.sendMessage(ChatColor.RED + "Your inventory was full, but you claimed " + ChatColor.RED + itemsClaimed + " items!");
-        player.sendMessage(ChatColor.YELLOW + "You still have " + ChatColor.RED + itemStash.get(player).size() + " items left!");
+        player.sendMessage(ChatColor.YELLOW + "You still have " + ChatColor.RED + itemStash.get(player.getUniqueId()).size() + " items left!");
 
         TextComponent filler = new TextComponent("§eClick ");
 

@@ -13,8 +13,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * The "Main" API class for RTC. This class has 3 methods that must be called in their respective spots and 1 utility method.
  */
+@SuppressWarnings("unused")
 public class RTCAPI {
-    public static long twistTimer = 6000;
+    public static long twistTimerPeriod = 6000;
+    public static long twistTimerDelay = 0;
 
     /**
      * Call this method in your plugin's onLoad method.
@@ -59,7 +61,17 @@ public class RTCAPI {
         return new NamespacedKey(plugin, key);
     }
 
-    public static void setTwistTimer(long ticks) {
-        twistTimer = ticks;
+    public static void setTwistTimerPeriod(long ticks) {
+        twistTimerPeriod = ticks;
+    }
+    public static void setTwistTimerPeriod(int seconds) {
+        twistTimerPeriod = seconds;
+    }
+
+    public static void setTwistTimerDelay(long ticks) {
+        twistTimerDelay = ticks;
+    }
+    public static void setTwistTimerDelay(int seconds) {
+        twistTimerDelay = seconds;
     }
 }

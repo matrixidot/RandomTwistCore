@@ -11,11 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-
+import java.util.List;
 /**
  * An extension of {@link me.neo.randomtwistcore.api.twists.Twist} that is used to make twists containing a custom item.
  */
+@SuppressWarnings("unused")
 public abstract class ItemTwist extends Twist {
     public ItemTwist(String name, String description, int id, boolean grantItemOnBind, boolean soulbound) {
         super(name, description, id);
@@ -95,10 +95,9 @@ public abstract class ItemTwist extends Twist {
         if (!isBound(player)) {
             ItemStack no = new ItemStack(Material.BARRIER);
             ItemMeta meta = no.getItemMeta();
-            meta.setDisplayName("\u200B" + ChatColor.DARK_RED + "You do not have access to this recipe");
-            meta.setLore(Arrays.asList(
-                    ChatColor.DARK_RED + "You do not have the required twist",
-                    ChatColor.DARK_RED + "to craft this item."
+            meta.setDisplayName(ChatColor.DARK_RED + "Recipe Locked");
+            meta.setLore(List.of(
+                    ChatColor.DARK_RED + "You do not have the required twist to craft this item"
             ));
             no.setItemMeta(meta);
             ev.getInventory().setResult(no);

@@ -3,7 +3,6 @@ package me.neo.randomtwistcore.commands;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import me.neo.randomtwistcore.RTCAPI;
 import me.neo.randomtwistcore.api.twists.Twist;
@@ -16,11 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-
-/**
- * This class and it's accompanying methods are not to be used anywhere in the code manually.
- * It is handled automatically in the {@link me.neo.randomtwistcore.RTCAPI} class.
- */
+@SuppressWarnings("unused")
 public class TwistCommands {
     private final JavaPlugin plugin;
 
@@ -43,16 +38,33 @@ public class TwistCommands {
     public void giveTwist() {
         new CommandAPICommand("giveTwist")
                 .withAliases("gt")
-                .withArguments(new BooleanArgument("silent"), new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
+                .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((sender, args) -> {
                     String twistName = (String) args.get(1);
-                    boolean silent = (boolean) args.get(0);
                     Twist twist = Twist.Get(twistName);
                     if (twist == null) {
                         sender.sendMessage(ChatColor.DARK_RED + "Invalid twist inputted");
                     } else {
-                        boolean success = Twist.tryBind(sender, twist, silent);
+                        boolean success = Twist.tryBind(sender, twist, false);
+                        if (!success)
+                            sender.sendMessage(ChatColor.RED + "Internal Occurred while trying to bind you to: " + twistName);
+                    }
+                }).register();
+    }
+
+    public void giveTwistSilent() {
+        new CommandAPICommand("giveTwistSilent")
+                .withAliases("gts")
+                .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
+                .withPermission(CommandPermission.OP)
+                .executesPlayer((sender, args) -> {
+                    String twistName = (String) args.get(0);
+                    Twist twist = Twist.Get(twistName);
+                    if (twist == null) {
+                        sender.sendMessage(ChatColor.DARK_RED + "Invalid twist inputted");
+                    } else {
+                        boolean success = Twist.tryBind(sender, twist, true);
                         if (!success)
                             sender.sendMessage(ChatColor.RED + "Internal Occurred while trying to bind you to: " + twistName);
                     }
@@ -81,15 +93,15 @@ public class TwistCommands {
         new CommandAPICommand("claimStash")
                 .withAliases("ct")
                 .executesPlayer((sender, args) -> {
-                    if (!Twist.itemStash.containsKey(sender))
-                        Twist.itemStash.put(sender, new ArrayList<>());
+                    if (!Twist.itemStash.containsKey(sender.getUniqueId()))
+                        Twist.itemStash.put(sender.getUniqueId(), new ArrayList<>());
                     int itemsClaimed = 0;
                     ArrayList<ItemStack> itemsToRemove = new ArrayList<>();
-                    if (Twist.itemStash.get(sender).size() <= 0) {
+                    if (Twist.itemStash.get(sender.getUniqueId()).size() == 0) {
                         sender.sendMessage(ChatColor.GREEN + "You have no items in your stash!");
                         return;
                     }
-                    for (int i = 0; i < Twist.itemStash.get(sender).size(); i++) {
+                    for (int i = 0; i < Twist.itemStash.get(sender.getUniqueId()).size(); i++) {
                         if (sender.getInventory().firstEmpty() == -1) {
                             Twist.doRemoveStashText(sender, itemsClaimed);
                             break;
@@ -103,7 +115,7 @@ public class TwistCommands {
                     for (ItemStack stack : itemsToRemove) {
                         Twist.removeFromStash(sender, stack);
                     }
-                    if (Twist.itemStash.get(sender).size() <= 0) {
+                    if (Twist.itemStash.get(sender.getUniqueId()).size() == 0) {
                         sender.sendMessage(ChatColor.GREEN + "All items have been claimed!");
                     }
                 }).register();
@@ -119,7 +131,7 @@ public class TwistCommands {
                 }
                 Twist.tryBind(player, RTCRandom.randomItem(valid), false);
             }
-        }, 0, RTCAPI.twistTimer);
+        }, RTCAPI.twistTimerDelay, RTCAPI.twistTimerPeriod);
     }
 
 }
