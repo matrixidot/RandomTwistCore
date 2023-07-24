@@ -23,6 +23,7 @@ public class TwistCommands {
         this.plugin = plugin;
         startCommand();
         giveTwist();
+        giveTwistSilent();
         takeTwist();
         claimStash();
     }
@@ -41,7 +42,7 @@ public class TwistCommands {
                 .withArguments(new GreedyStringArgument("Twist Name").replaceSuggestions(ArgumentSuggestions.strings(Twist.twistNames)))
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((sender, args) -> {
-                    String twistName = (String) args.get(1);
+                    String twistName = (String) args.get(0);
                     Twist twist = Twist.Get(twistName);
                     if (twist == null) {
                         sender.sendMessage(ChatColor.DARK_RED + "Invalid twist inputted");
