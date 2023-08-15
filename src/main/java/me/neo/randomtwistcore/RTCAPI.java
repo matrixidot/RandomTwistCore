@@ -29,6 +29,8 @@ public class RTCAPI {
      * @param <T> The {@link org.bukkit.plugin.java.JavaPlugin}
      */
     public static <T extends JavaPlugin> void onLoad(T plugin) {
+        parentPlugin = plugin;
+        internalKey = new NamespacedKey(plugin, internalString);
         CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).verboseOutput(true));
     }
 
@@ -39,8 +41,6 @@ public class RTCAPI {
      * @param <T> The {@link org.bukkit.plugin.java.JavaPlugin}
      */
     public static <T extends JavaPlugin> void onEnable(T plugin) {
-        parentPlugin = plugin;
-        internalKey = new NamespacedKey(plugin, internalString);
         new TwistCommands(plugin);
         Bukkit.getPluginManager().registerEvents(new RTCEventListener(), plugin);
         for (String string : Twist.twistNames) {
