@@ -1,4 +1,4 @@
-package me.neo.randomtwistcore.api.twists.events;
+package me.neo.randomtwistcore.api.events;
 
 import me.neo.randomtwistcore.api.twists.ItemTwist;
 import me.neo.randomtwistcore.api.twists.NaturalTwist;
@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import java.util.List;
 
 public class RTCEventListener implements Listener {
+
     @EventHandler
     public void onRespawn(PlayerRespawnEvent ev) {
         Player player = ev.getPlayer();

@@ -1,15 +1,24 @@
 package me.neo.randomtwistcore.api.twists;
 
+import me.neo.randomtwistcore.RTCAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 /**
@@ -19,78 +28,65 @@ import java.util.List;
 public abstract class ItemTwist extends Twist {
     public ItemTwist(String name, String description, int id, boolean grantItemOnBind, boolean soulbound) {
         super(name, description, id);
-        customItem = buildCustomItem();
-        customRecipe = buildShapedRecipe();
+        customItem = configureItem();
+        customRecipe = buildShapedRecipe(customItem);
         Bukkit.addRecipe(customRecipe);
         this.grantItemOnBind = grantItemOnBind;
         this.soulbound = soulbound;
     }
 
-    protected boolean soulbound;
-
+    private final boolean soulbound;
     public boolean isSoulbound() {
         return soulbound;
     }
 
-    /**
-     * A boolean representing if the {@link #customItem} is automatically granted when a {@link org.bukkit.entity.Player} is bound to this twist.
-     */
-    protected boolean grantItemOnBind;
-
-    /**
-     * Returns if the item is granted when the player is bound.
-     * @return If the item is granted.
-     */
+    private final boolean grantItemOnBind;
     public boolean isItemGrantedOnBind() {
         return grantItemOnBind;
     }
 
-    /**
-     * An {@link org.bukkit.inventory.ItemStack} that represents the item that this twist revolves around.
-     */
-    protected ItemStack customItem;
-    /**
-     * Returns the {@link org.bukkit.inventory.ItemStack} that is the custom item.
-     * @return The custom item.
-     */
+
+    private ItemStack customItem;
     public ItemStack getCustomItem() {
         return customItem;
     }
 
-    /**
-     * A {@link org.bukkit.inventory.ShapedRecipe} that represents the recipe of the {@link #customItem}.
-     */
-    protected ShapedRecipe customRecipe;
-    /**
-     * Returns the {@link org.bukkit.inventory.ShapedRecipe} used to craft the custom item.
-     * @return The recipe.
-     */
+
+    private ShapedRecipe customRecipe;
     public ShapedRecipe getCustomRecipe() {
         return customRecipe;
     }
 
-    /**
-     * This method is used to define the {@link #customItem} in an extending class.
-     * @return The {@link org.bukkit.inventory.ItemStack} that is the custom item.
-     */
+
     public abstract ItemStack buildCustomItem();
+    private ItemStack configureItem() {
+        ItemStack customItem = buildCustomItem();
+        ItemMeta meta = customItem.getItemMeta();
+        meta.getPersistentDataContainer().set(RTCAPI.internalKey, PersistentDataType.STRING, RTCAPI.internalString + description + name + id);
+        customItem.setItemMeta(meta);
+        return customItem;
+    }
+    public abstract ShapedRecipe buildShapedRecipe(ItemStack customItem);
 
-    /**
-     * This method is used to define the {@link #customItem} in an extending class.
-     * @return The {@link org.bukkit.inventory.ShapedRecipe} that is the custom item.
-     */
-    public abstract ShapedRecipe buildShapedRecipe();
-
-    private boolean isCustomItem(ItemStack stack) {
-        return stack.equals(customItem);
+    public boolean check(ItemStack stack) {
+        if (stack == null)
+            return false;
+        if (!stack.hasItemMeta())
+            return false;
+        ItemMeta meta = stack.getItemMeta();
+        PersistentDataContainer PDC = meta.getPersistentDataContainer();
+        if (!PDC.has(RTCAPI.internalKey, PersistentDataType.STRING))
+            return false;
+        return PDC.get(RTCAPI.internalKey, PersistentDataType.STRING).equals(RTCAPI.internalString + description + name + id);
     }
 
 
 
     @EventHandler
     public void onCraft(CraftItemEvent ev) {
-        if (!isCustomItem(ev.getRecipe().getResult()))
+        if (!check(ev.getRecipe().getResult()))
             return;
+
         Player player = (Player) ev.getWhoClicked();
         if (!isBound(player)) {
             ItemStack no = new ItemStack(Material.BARRIER);
@@ -107,23 +103,32 @@ public abstract class ItemTwist extends Twist {
     }
 
 
-    /**
-     * Checks if the given {@link org.bukkit.inventory.ItemStack} is the custom item.
-     * @param stack The {@link org.bukkit.inventory.ItemStack} to compare to
-     * @return True if it is the custom item. False otherwise.
-     */
-    protected boolean check(ItemStack stack) {
-        return stack.isSimilar(customItem);
+    public abstract void rightClickAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand);
+    public abstract void leftClickAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand);
+    public abstract void rightClickBlockAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand, Block clickedBlock, BlockFace clickedFace);
+    public abstract void leftClickBlockAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand, Block clickedBlock, BlockFace clickedFace);
+    public abstract void rightClickEntityAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand, Entity clickedEntity);
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent ev) {
+        if (!ev.hasItem())
+            return;
+        if (!check(ev.getItem()))
+            return;
+
+        switch (ev.getAction()) {
+            case RIGHT_CLICK_AIR -> rightClickAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand());
+            case LEFT_CLICK_AIR -> leftClickAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand());
+            case RIGHT_CLICK_BLOCK -> rightClickBlockAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand(), ev.getClickedBlock(), ev.getBlockFace());
+            case LEFT_CLICK_BLOCK -> leftClickBlockAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand(), ev.getClickedBlock(), ev.getBlockFace());
+            default -> {}
+        }
     }
 
-    /**
-     * Checks if the display name is the custom item's display name.
-     * This method is less reliable than the ItemStack method.
-     * Only use this method if the properties of the {@link org.bukkit.inventory.ItemStack} are compromised.
-     * @param displayName The display name of the item to check.
-     * @return True if it is the custom item. False otherwise.
-     */
-    protected boolean check(String displayName) {
-        return displayName.equals(customItem.getItemMeta().getDisplayName());
+    @EventHandler
+    public void onInteractEntity(PlayerInteractEntityEvent ev) {
+        if (!check(ev.getPlayer().getInventory().getItem(ev.getHand())))
+            return;
+        rightClickEntityAbility(ev.getPlayer(), ev.getPlayer().getInventory().getItem(ev.getHand()), ev.getPlayer().isSneaking(), ev.getHand(), ev.getRightClicked());
     }
 }

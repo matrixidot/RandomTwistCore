@@ -1,4 +1,4 @@
-package me.neo.randomtwistcore.api.twists.customevents;
+package me.neo.randomtwistcore.api.customevents;
 
 import me.neo.randomtwistcore.api.twists.Twist;
 import org.bukkit.entity.Player;

@@ -3,7 +3,7 @@ package me.neo.randomtwistcore;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.neo.randomtwistcore.api.twists.Twist;
-import me.neo.randomtwistcore.api.twists.events.RTCEventListener;
+import me.neo.randomtwistcore.api.events.RTCEventListener;
 import me.neo.randomtwistcore.commands.TwistCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,8 +15,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 @SuppressWarnings("unused")
 public class RTCAPI {
+    public static JavaPlugin parentPlugin;
     public static long twistTimerPeriod = 6000;
     public static long twistTimerDelay = 0;
+
+    public static NamespacedKey internalKey;
+    public static String internalString = "RTC.CustomItem.Internal.Identifier";
 
     /**
      * Call this method in your plugin's onLoad method.
@@ -35,6 +39,8 @@ public class RTCAPI {
      * @param <T> The {@link org.bukkit.plugin.java.JavaPlugin}
      */
     public static <T extends JavaPlugin> void onEnable(T plugin) {
+        parentPlugin = plugin;
+        internalKey = new NamespacedKey(plugin, internalString);
         new TwistCommands(plugin);
         Bukkit.getPluginManager().registerEvents(new RTCEventListener(), plugin);
         for (String string : Twist.twistNames) {

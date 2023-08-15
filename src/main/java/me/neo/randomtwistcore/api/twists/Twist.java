@@ -1,9 +1,9 @@
 package me.neo.randomtwistcore.api.twists;
 
-import me.neo.randomtwistcore.api.twists.customevents.PlayerBindTwistEvent;
-import me.neo.randomtwistcore.api.twists.customevents.PlayerUnbindTwistEvent;
-import me.neo.randomtwistcore.api.twists.customevents.RegisterTwistEvent;
-import me.neo.randomtwistcore.api.twists.customevents.UnregisterTwistEvent;
+import me.neo.randomtwistcore.api.customevents.PlayerBindTwistEvent;
+import me.neo.randomtwistcore.api.customevents.PlayerUnbindTwistEvent;
+import me.neo.randomtwistcore.api.customevents.RegisterTwistEvent;
+import me.neo.randomtwistcore.api.customevents.UnregisterTwistEvent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -252,7 +252,7 @@ public abstract class Twist implements Listener {
     }
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.RegisterTwistEvent} and tries to register a twist.
+     * Calls {@link RegisterTwistEvent} and tries to register a twist.
      * If the event was cancelled the twist will not be registered.
      * If a twist was registered after the plugin was enabled the twist will not show up inside the command pool.
      * The functionality, however, will still persist.
@@ -285,7 +285,7 @@ public abstract class Twist implements Listener {
     }
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.UnregisterTwistEvent} and tries to unregister a twist.
+     * Calls {@link UnregisterTwistEvent} and tries to unregister a twist.
      * If the event was cancelled the twist will not be unregistered.
      * This will not remove the twist from the command pool as those are statically generated upon enabling the plugin.
      * Unregistering a twist will automatically unbind all players from the twist but will not call PlayerUnbindEvent as the twist has been removed.
@@ -324,7 +324,7 @@ public abstract class Twist implements Listener {
     }
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.PlayerBindTwistEvent} and tries to bind a player to a twist.
+     * Calls {@link PlayerBindTwistEvent} and tries to bind a player to a twist.
      * If the event was cancelled the player will not be bound.
      * @param player The {@link org.bukkit.entity.Player} to bind.
      * @param twist The {@link me.neo.randomtwistcore.api.twists.Twist} to bind the player to.
@@ -362,16 +362,16 @@ public abstract class Twist implements Listener {
             if (twist instanceof ItemTwist itemTwist) {
                 if (!itemStash.containsKey(player.getUniqueId()))
                     itemStash.put(player.getUniqueId(), new ArrayList<>());
-                if (itemTwist.customRecipe != null) {
-                    player.discoverRecipe(itemTwist.customRecipe.getKey());
+                if (itemTwist.getCustomRecipe() != null) {
+                    player.discoverRecipe(itemTwist.getCustomRecipe().getKey());
                     if (!silent)
                         player.sendMessage(ChatColor.GREEN + "You have discovered a new recipe for: " + twist.name + "!");
                 }
 
-                if (itemTwist.grantItemOnBind) {
+                if (itemTwist.isItemGrantedOnBind()) {
                     if (player.getInventory().firstEmpty() == -1) {
-                        if (!itemStash.get(player.getUniqueId()).contains(itemTwist.customItem))
-                            itemStash.get(player.getUniqueId()).add(itemTwist.customItem);
+                        if (!itemStash.get(player.getUniqueId()).contains(itemTwist.getCustomItem()))
+                            itemStash.get(player.getUniqueId()).add(itemTwist.getCustomItem());
                         doAddStashText(player);
                     } else {
                         player.getInventory().addItem(itemTwist.getCustomItem());
@@ -386,7 +386,7 @@ public abstract class Twist implements Listener {
 
 
     /**
-     * Calls {@link me.neo.randomtwistcore.api.twists.customevents.PlayerBindTwistEvent} and tries to unbind a player from a twist.
+     * Calls {@link PlayerBindTwistEvent} and tries to unbind a player from a twist.
      * If the event was cancelled the player will not be unbound.
      * @param player The {@link org.bukkit.entity.Player} to unbind.
      * @param twist The {@link me.neo.randomtwistcore.api.twists.Twist} to unbind the player from.
@@ -403,8 +403,8 @@ public abstract class Twist implements Listener {
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTC | Unbound]: " + player.getName() + " from: " + twist.name + "!" + " This was because " + twist.name + " is going to be unregistered");
             player.sendMessage(ChatColor.RED + "Lost twist: " + twist.name + "!" + " This was because " + twist.name + " is going to be unregistered");
             if (twist instanceof ItemTwist itemTwist)
-                if (itemTwist.customRecipe != null)
-                    player.undiscoverRecipe(itemTwist.customRecipe.getKey());
+                if (itemTwist.getCustomRecipe() != null)
+                    player.undiscoverRecipe(itemTwist.getCustomRecipe().getKey());
 
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 0.5f);
             return true;
@@ -431,8 +431,8 @@ public abstract class Twist implements Listener {
                 player.sendMessage(ChatColor.RED + "Lost twist: " + twist.name + "!");
 
                 if (twist instanceof ItemTwist itemTwist)
-                    if (itemTwist.customRecipe != null)
-                        player.undiscoverRecipe(itemTwist.customRecipe.getKey());
+                    if (itemTwist.getCustomRecipe() != null)
+                        player.undiscoverRecipe(itemTwist.getCustomRecipe().getKey());
 
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 0.5f);
                 return true;
