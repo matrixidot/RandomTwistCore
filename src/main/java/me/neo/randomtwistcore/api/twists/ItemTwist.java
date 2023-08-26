@@ -5,15 +5,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -103,11 +99,11 @@ public abstract class ItemTwist extends Twist {
     }
 
 
-    public abstract void rightClickAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand);
-    public abstract void leftClickAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand);
-    public abstract void rightClickBlockAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand, Block clickedBlock, BlockFace clickedFace);
-    public abstract void leftClickBlockAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand, Block clickedBlock, BlockFace clickedFace);
-    public abstract void rightClickEntityAbility(Player player, ItemStack stack, boolean isSneaking, EquipmentSlot hand, Entity clickedEntity);
+    public abstract void rightClickAbility(PlayerInteractEvent event);
+    public abstract void leftClickAbility(PlayerInteractEvent event);
+    public abstract void rightClickBlockAbility(PlayerInteractEvent event);
+    public abstract void leftClickBlockAbility(PlayerInteractEvent event);
+    public abstract void rightClickEntityAbility(PlayerInteractEntityEvent event);
 
     @EventHandler
     public void onInteract(PlayerInteractEvent ev) {
@@ -117,10 +113,10 @@ public abstract class ItemTwist extends Twist {
             return;
 
         switch (ev.getAction()) {
-            case RIGHT_CLICK_AIR -> rightClickAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand());
-            case LEFT_CLICK_AIR -> leftClickAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand());
-            case RIGHT_CLICK_BLOCK -> rightClickBlockAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand(), ev.getClickedBlock(), ev.getBlockFace());
-            case LEFT_CLICK_BLOCK -> leftClickBlockAbility(ev.getPlayer(), ev.getItem(), ev.getPlayer().isSneaking(), ev.getHand(), ev.getClickedBlock(), ev.getBlockFace());
+            case RIGHT_CLICK_AIR -> rightClickAbility(ev);
+            case LEFT_CLICK_AIR -> leftClickAbility(ev);
+            case RIGHT_CLICK_BLOCK -> rightClickBlockAbility(ev);
+            case LEFT_CLICK_BLOCK -> leftClickBlockAbility(ev);
             default -> {}
         }
     }
@@ -129,6 +125,6 @@ public abstract class ItemTwist extends Twist {
     public void onInteractEntity(PlayerInteractEntityEvent ev) {
         if (!check(ev.getPlayer().getInventory().getItem(ev.getHand())))
             return;
-        rightClickEntityAbility(ev.getPlayer(), ev.getPlayer().getInventory().getItem(ev.getHand()), ev.getPlayer().isSneaking(), ev.getHand(), ev.getRightClicked());
+        rightClickEntityAbility(ev);
     }
 }

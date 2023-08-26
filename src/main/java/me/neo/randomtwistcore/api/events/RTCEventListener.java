@@ -21,6 +21,8 @@ public class RTCEventListener implements Listener {
         if (Boolean.TRUE.equals(ev.getPlayer().getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY)))
             return;
         List<ItemTwist> toReclaim = Twist.getSoulboundItemTwists(player);
+        if (toReclaim.isEmpty())
+            return;
         boolean doesStash = false;
         for (ItemTwist it : toReclaim) {
             if (player.getInventory().contains(it.getCustomItem()))
