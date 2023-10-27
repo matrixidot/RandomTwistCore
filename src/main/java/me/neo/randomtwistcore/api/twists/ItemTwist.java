@@ -91,6 +91,7 @@ public abstract class ItemTwist extends Twist {
             meta.setLore(List.of(
                     ChatColor.DARK_RED + "You do not have the required twist to craft this item"
             ));
+
             no.setItemMeta(meta);
             ev.getInventory().setResult(no);
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
